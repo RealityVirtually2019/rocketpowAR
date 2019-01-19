@@ -1,0 +1,23 @@
+{
+  "name": "rocketpowar",
+  "version": "1.0.0",
+  "description": "Starting 2019 off strong with an amazing MIT project utilizing Brain Computer Interface and Magic Leap Technology to create an at-home physical therapy application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrainonSilicon/rocketpowAR.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BrainonSilicon/rocketpowAR/issues"
+  },
+  "homepage": "https://github.com/BrainonSilicon/rocketpowAR#readme",
+  "devDependencies": {
+    "openbci-ganglion": "^1.2.0",
+    "socket.io": "^2.2.0"
+  }
+}
