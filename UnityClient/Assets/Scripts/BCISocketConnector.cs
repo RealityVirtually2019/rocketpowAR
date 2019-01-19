@@ -5,7 +5,8 @@ using Quobject.SocketIoClientDotNet.Client;
 
 public class BCISocketConnector : MonoBehaviour
 {
-	public string SocketIOHost = "ws://localhost:3000";
+//	public string SocketIOHost = "ws://10.189.1.40:3000";
+	public string SocketIOHost = "ws://10.189.12.183:3000"; // 18.30.24.217
 	public Transform[] TargetCubes;
 
 	protected List<ChannelData> _dataQueue = new List<ChannelData>();
@@ -29,6 +30,7 @@ public class BCISocketConnector : MonoBehaviour
 			return;
 		}
 
+		Debug.Log("Attempting to connect to socket.io");
 		// Useful example of how to send data cross-thread.
 		// https://github.com/floatinghotpot/socket.io-unity/blob/master/Demo/SocketIOScript.cs
 		_socket = IO.Socket(SocketIOHost);
