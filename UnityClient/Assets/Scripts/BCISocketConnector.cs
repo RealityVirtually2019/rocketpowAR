@@ -1,40 +1,73 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
-using Dpoch.SocketIO;
+using Quobject.SocketIoClientDotNet.Client;
 
 public class BCISocketConnector : MonoBehaviour
 {
-    void Start()
-    {
-        SocketIO socket = new SocketIO("ws://127.0.0.1:/socket.io/?EIO=4&transport=websocket");
-//        SocketIO socket = new SocketIO("ws://10.189.1.40:3000/socket.io/?EIO=4&transport=websocket");
+	public string SocketIOHost = "ws://localhost:3000";
+	public Transform[] TargetCubes;
 
-        float startTime = Time.realtimeSinceStartup;
+	protected List<ChannelData> _dataQueue = new List<ChannelData>();
+	private Socket _socket;
 
-        socket.On("channel-data", (ev) =>
-        {
-            int channelID = ev.Data[0].ToObject<int>();
-            float value = ev.Data[1].ToObject<float>();
-            Debug.Log(channelID);
-            Debug.Log(value);
-        });
+	void Destroy()
+	{
+		if (_socket != null)
+		{
+			Debug.Log("Disconnecting");
+			_socket.Disconnect();
+			_socket = null;
+		}
+	}
 
-        socket.OnOpen += () => { Debug.Log("Opened"); };
-        socket.OnConnectFailed += () => Debug.Log("Socket failed to connect!");
-        socket.OnClose += () =>
-        {
-            float elapsed = Time.realtimeSinceStartup - startTime;
-            Debug.Log("Time left: " + elapsed);
-            Debug.Log("Socket closed!");
-        };
-        socket.OnError += (err) =>
-        {
-            float elapsed = Time.realtimeSinceStartup - startTime;
-            Debug.Log("Time left: " + elapsed);
-            Debug.Log("Socket Error: " + err);
-        };
+	void Start()
+	{
+		if (TargetCubes.Length < 4)
+		{
+			Debug.LogError("Must have at least 4 target cubes set.");
+			return;
+		}
 
-        socket.Connect();
-    }
+		// Useful example of how to send data cross-thread.
+		// https://github.com/floatinghotpot/socket.io-unity/blob/master/Demo/SocketIOScript.cs
+		_socket = IO.Socket(SocketIOHost);
+		_socket.On(Socket.EVENT_CONNECT, () => { Debug.Log("Connected to OpenBCI Connector."); });
+
+		_socket.On("channel-data", data =>
+		{
+			lock (_dataQueue)
+			{
+				ChannelData channelData = JsonConvert.DeserializeObject<ChannelData>(data.ToString());
+				_dataQueue.Add(channelData);
+			}
+		});
+	}
+
+	void Update()
+	{
+		lock (_dataQueue)
+		{
+			if (_dataQueue.Count > 0)
+			{
+				foreach (ChannelData data in _dataQueue)
+				{
+					if (data.value > 0)
+					{
+						Debug.Log(data.channelID);
+						TargetCubes[data.channelID].localScale = Vector3.one * data.value;
+					}
+				}
+				_dataQueue.Clear();
+			}
+		}
+	}
+}
+
+public class ChannelData
+{
+	// Used for deserialization, ensure this structure matches that in Server/stream.js `io.emit` calls 
+	public int channelID;
+
+	public float value;
 }
