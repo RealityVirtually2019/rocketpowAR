@@ -17,7 +17,7 @@ Unity build for Magic Leap  <br/>
 Node.js library <br/>
 
 
-## Refernece Links
+## Reference Links
 
 * [Unity Socket.io Client Plugin](https://github.com/dp0ch/Unity-SocketIO-Client)
 * [To set up the Ganglion](http://docs.openbci.com/Tutorials/02-Ganglion_Getting%20Started_Guide)
