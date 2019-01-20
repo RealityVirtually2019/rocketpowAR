@@ -78,6 +78,7 @@ namespace MagicLeap
         {
             _controllerConnectionHandler = GetComponent<ControllerConnectionHandler>();
 
+            #if !UNITY_EDITOR
             if (!_controllerModel)
             {
                 Debug.LogError("Error: ControllerVisualizer._controllerModel is not set, disabling script.");
@@ -116,6 +117,9 @@ namespace MagicLeap
             }
 
             SetVisibility(_controllerConnectionHandler.IsControllerValid());
+#else
+            SetVisibility(true);
+#endif
 
             MLInput.OnControllerButtonUp += HandleOnButtonUp;
             MLInput.OnControllerButtonDown += HandleOnButtonDown;
@@ -137,7 +141,9 @@ namespace MagicLeap
         {
             UpdateTriggerVisuals();
             UpdateTouchpadIndicator();
+            #if !UNITY_EDITOR
             SetVisibility(_controllerConnectionHandler.IsControllerValid());
+            #endif
         }
 
         /// <summary>
