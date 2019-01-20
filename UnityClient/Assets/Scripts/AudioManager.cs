@@ -2,15 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : Singleton<AudioManager> {
+public class AudioManager : Singleton<AudioManager>
+{
+	public AudioSource MusicAudioSource;
+	public AudioSource NarrativeAudioSource;
 
-	// Use this for initialization
-	void Start () {
-		
+	public void PlayMusic(AudioClip audioToPlay)
+	{
+		MusicAudioSource.clip = audioToPlay;
+		MusicAudioSource.Play();
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
+	public bool IsMusicStillPlaying()
+	{
+		return MusicAudioSource.isPlaying;
+	}
+	
+	public void PlayNarrative(AudioClip audioToPlay)
+	{
+		NarrativeAudioSource.clip = audioToPlay;
+		NarrativeAudioSource.Play();
+	}
+	
+	public bool IsNarrativeStillPlaying()
+	{
+		return NarrativeAudioSource.isPlaying;
 	}
 }

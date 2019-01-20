@@ -32,7 +32,7 @@ public class ConveyerBelt : MonoBehaviour {
 
     public void RaiseConveyerBelt()
     {
-        if (GameFlowManager.Instance.CurrentGameState == GlobalGameState.SELECTEXERCISE)
+        if (GameFlowManager.Instance.GetGameState() == GlobalGameState.SELECT_EXERCISE)
         {
             conveyerBeltRaiseSFX.Play();
             ConveyerBeltCenter.transform.position = Vector3.Lerp(conveyerBeltBelowElevator, conveyerBeltRaised, 2000f);
@@ -41,7 +41,7 @@ public class ConveyerBelt : MonoBehaviour {
 
     public void LowerConveyerBelt()
     {
-        if (GameFlowManager.Instance.CurrentGameState == GlobalGameState.SELECTEXERCISE)
+        if (GameFlowManager.Instance.GetGameState() == GlobalGameState.SELECT_EXERCISE)
         {
             conveyerBeltLowerSFX.Play();
             ConveyerBeltCenter.transform.position = Vector3.Lerp(conveyerBeltRaised, conveyerBeltBelowElevator, 2000f);
@@ -50,7 +50,7 @@ public class ConveyerBelt : MonoBehaviour {
 
     public void RotateConveyerBeltRight()
     {
-        if (GameFlowManager.Instance.CurrentGameState == GlobalGameState.SELECTEXERCISE && !conveyerBeltRotateSFX.isPlaying)
+        if (GameFlowManager.Instance.GetGameState() == GlobalGameState.SELECT_EXERCISE && !conveyerBeltRotateSFX.isPlaying)
         {
             ConveyerBeltCenter.transform.Rotate(gameObject.transform.position, 45f);
         }
@@ -58,7 +58,7 @@ public class ConveyerBelt : MonoBehaviour {
 
     public void RotateConveyerBeltLeft()
     {
-        if (GameFlowManager.Instance.CurrentGameState == GlobalGameState.SELECTEXERCISE && !conveyerBeltRotateSFX.isPlaying)
+        if (GameFlowManager.Instance.GetGameState() == GlobalGameState.SELECT_EXERCISE && !conveyerBeltRotateSFX.isPlaying)
         {
             ConveyerBeltCenter.transform.Rotate(gameObject.transform.position, -45f);
         }
