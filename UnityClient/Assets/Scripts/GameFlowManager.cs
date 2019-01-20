@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameFlowManager : Singleton<GameFlowManager>
 {
 	public Transform PlaySpaceRoot;
+	public Transform BodyFull;
+	public Transform Torso;
 	
 	public Animator ElevatorDoor;
 	public Animator MenuScene;
@@ -43,6 +45,8 @@ public class GameFlowManager : Singleton<GameFlowManager>
 			{
 				PlaySpaceRoot.gameObject.SetActive(true);
 				Transform controllerRaycast = InputManager.Instance.ControllerRaycast;
+				BodyFull.transform.gameObject.SetActive(true);
+				Torso.transform.gameObject.SetActive(false);
 				PlaySpaceRoot.transform.position = controllerRaycast.position;
 				PlaySpaceRoot.transform.LookAt(Camera.main.transform);
 				PlaySpaceRoot.transform.localEulerAngles = new Vector3(0f, PlaySpaceRoot.transform.localEulerAngles.y, 0f);
@@ -57,16 +61,17 @@ public class GameFlowManager : Singleton<GameFlowManager>
 			UIManager.Instance.HintText.text = "SELECT YOUR EXERCISE";
 			if (InputManager.Instance.IsTriggerDown())
 			{
-				GoToState(GlobalGameState.TRANSITION_TO_COMMAND_CENTER);
+				// TODO: Add transition effect!
+				BodyFull.transform.gameObject.SetActive(false);
+				Torso.transform.gameObject.SetActive(true);
+				GoToState(GlobalGameState.NICE);
 			}
 		}
-		else if (_currentGameState == GlobalGameState.TRANSITION_TO_COMMAND_CENTER)
+		else if (_currentGameState == GlobalGameState.NICE)
 		{
 			UIManager.Instance.BigCenterText.text = "";
-			UIManager.Instance.HintText.text = "[TRANSITION]";
-			if (InputManager.Instance.IsTriggerDown()
-				// And animation is finished
-			)
+			UIManager.Instance.HintText.text = "";
+			if (!AudioManager.Instance.IsNarrativeStillPlaying() || Input.GetKeyDown(KeyCode.F))
 			{
 				GoToState(GlobalGameState.PLACE_ELECTRODES);
 			}
@@ -75,7 +80,25 @@ public class GameFlowManager : Singleton<GameFlowManager>
 		{
 			UIManager.Instance.BigCenterText.text = "";
 			UIManager.Instance.HintText.text = "PLACE ELECTRODES";
-			if (InputManager.Instance.IsTriggerDown())
+			if ((!AudioManager.Instance.IsNarrativeStillPlaying() && InputManager.Instance.IsTriggerDown()) || Input.GetKeyDown(KeyCode.F))
+			{
+				GoToState(GlobalGameState.PLACE_ELECTRODES_2);
+			}
+		}
+		else if (_currentGameState == GlobalGameState.PLACE_ELECTRODES_2)
+		{
+			UIManager.Instance.BigCenterText.text = "";
+			UIManager.Instance.HintText.text = "PLACE ELECTRODES";
+			if ((!AudioManager.Instance.IsNarrativeStillPlaying() && InputManager.Instance.IsTriggerDown()) || Input.GetKeyDown(KeyCode.F))
+			{
+				GoToState(GlobalGameState.ROCKET_TRANSITION);
+			}
+		}
+		else if (_currentGameState == GlobalGameState.ROCKET_TRANSITION)
+		{
+			UIManager.Instance.BigCenterText.text = "";
+			UIManager.Instance.HintText.text = "";
+			if ((!AudioManager.Instance.IsNarrativeStillPlaying() && InputManager.Instance.IsTriggerDown()) || Input.GetKeyDown(KeyCode.F))
 			{
 				GoToState(GlobalGameState.LAUNCH_ROCKETS);
 			}
@@ -122,38 +145,65 @@ public class GameFlowManager : Singleton<GameFlowManager>
 		}
 		else if (stateBeingEntered == GlobalGameState.PLACE_ELEVATOR)
 		{
-			AudioManager.Instance.PlayMusic(AudioLibrary.Instance.AmbientIntro);
+			AudioManager.Instance.StopMusic();
+			AudioManager.Instance.PlayAmbient(AudioLibrary.Instance.AmbientIntro);
 			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.NarrativePlaceElevator);
 		}
 		else if (stateBeingEntered == GlobalGameState.SELECT_EXERCISE)
 		{
-			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.NarrativeSelectExercise);
+			AudioManager.Instance.PlaySoundEffect(AudioLibrary.Instance.ElevatorDoorOpen);
+			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.NarrativeWelcomeGreeting, 4.3f);
+			StartCoroutine(delayedAnimation(ElevatorDoor, "ElevatorDoorCloseNew", 4.3f));
+
+		}
+		else if (stateBeingEntered == GlobalGameState.NICE)
+		{
+			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.ChosenItem);
+			AudioManager.Instance.PlaySoundEffect(AudioLibrary.Instance.TorsoTransition);
 		}
 		else if (stateBeingEntered == GlobalGameState.PLACE_ELECTRODES)
 		{
-//			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.NarrativeIntro);
+			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.SensorIntroduction1);
 		}
-		else if (stateBeingEntered == GlobalGameState.TRANSITION_TO_COMMAND_CENTER)
+		else if (stateBeingEntered == GlobalGameState.PLACE_ELECTRODES_2)
 		{
-			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.NarrativeIntro);
+			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.SensorIntroduction2);
+			StartCoroutine(delayedAnimation(ElevatorDoor, "ElevatorDoorOpenNew", 0f));
+		}
+		else if (stateBeingEntered == GlobalGameState.ROCKET_TRANSITION)
+		{
+			MenuScene.Play("HumanTubeLower");
+			StartCoroutine(delayedAnimation(ElevatorDoor, "ElevatorDoorCloseNew", 1.5f));
+			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.SensorSet);
+			AudioManager.Instance.PlaySoundEffect(AudioLibrary.Instance.ElevatorDoorOpen);
 		}
 		else if (stateBeingEntered == GlobalGameState.LAUNCH_ROCKETS)
 		{
 			RocketLaunchMiniGame.Instance.StartMiniGame();
 		}
 	}
+	
+	IEnumerator delayedAnimation (Animator animator, string animationName, float startDelay)
+	{
+		yield return new WaitForSeconds(startDelay);
+		animator.Play(animationName);
+	}
 }
+     
 
 public enum GlobalGameState
 {
 	NOT_STARTED,
 	WAIT_TO_BEGIN,
 	PLACE_ELEVATOR,
+	MENU_LOAD,
 	SELECT_EXERCISE,
-	TRANSITION_TO_COMMAND_CENTER,
+	NICE,
 	PLACE_ELECTRODES,
+	PLACE_ELECTRODES_2,
+	ROCKET_TRANSITION,
 	LAUNCH_ROCKETS,
 	GAME_WON,
 	NARRATIVE,
-	WIN
+	WIN,
 }

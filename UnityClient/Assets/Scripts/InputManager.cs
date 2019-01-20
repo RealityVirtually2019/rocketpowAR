@@ -16,7 +16,7 @@ public class InputManager : Singleton<InputManager>
 	{
 		MLInputController mlInputController = ControllerConnectionHandler.ConnectedController;
 
-		if (Input.GetKeyDown(KeyCode.Space))
+		if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.F))
 		{
 			_lastTriggerTime = Time.realtimeSinceStartup;
 			return true;

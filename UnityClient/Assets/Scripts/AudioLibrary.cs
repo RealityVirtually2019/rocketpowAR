@@ -6,7 +6,7 @@ public class AudioLibrary : Singleton<AudioLibrary>
 {
 	[Header("Narrative Clips")]
 	public AudioClip NarrativePlaceElevator;
-	public AudioClip NarrativeSelectExercise;
+	public AudioClip NarrativeWelcomeGreeting;
 	public AudioClip NarrativeIntro;
 	
 	public AudioClip SpacePlacement1;
@@ -14,8 +14,8 @@ public class AudioLibrary : Singleton<AudioLibrary>
 	public AudioClip SensorIntroduction1;
 	public AudioClip SensorIntroduction2;
 	public AudioClip SensorSet;
-	
 	public AudioClip ChosenItem;
+
 	public AudioClip SuccessMessage;
 	public AudioClip WelcomeGreeting;
 
@@ -33,4 +33,5 @@ public class AudioLibrary : Singleton<AudioLibrary>
 	[Header("Sound Effects")]
 	public AudioClip ElevatorDoorOpen;
 	public AudioClip TriggerSound;
+	public AudioClip TorsoTransition;
 }
