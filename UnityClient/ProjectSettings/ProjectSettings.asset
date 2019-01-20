@@ -581,8 +581,8 @@ PlayerSettings:
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 0
   apiCompatibilityLevelPerPlatform:
-    Lumin: 1
-    Standalone: 1
+    Lumin: 2
+    Standalone: 2
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: Template_Lightweight

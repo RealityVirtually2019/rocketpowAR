@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class BCIHTTPConnector : Singleton<BCIHTTPConnector>
 {
+	public Text StatusText;
 	private bool _isActivated;
 
 	public void ResetIsActivated()
@@ -34,22 +36,21 @@ public class BCIHTTPConnector : Singleton<BCIHTTPConnector>
 
 	IEnumerator MakeDataRequest()
 	{
-		UnityWebRequest www = UnityWebRequest.Get("http://b3a6a049.ngrok.io/");
-		Debug.Log("Web Request Started");
+		UnityWebRequest www = UnityWebRequest.Get("http://bci.ngrok.io");
 		yield return www.SendWebRequest();
-		Debug.Log("Web Request Ended");
 		if (www.isNetworkError || www.isHttpError)
 		{
-			Debug.Log("It errored");
-			Debug.Log(www.error);
+//			Debug.Log("It errored");
+//			Debug.Log(www.error);
 		}
 		else
 		{
-			Debug.Log("It succeeded:");
-			Debug.Log(www.responseCode);
-			Debug.Log("Resp text:");
-			Debug.Log(www.downloadHandler.text);
-			if (www.downloadHandler.text == "true")
+//			Debug.Log("It succeeded:");
+//			Debug.Log(www.responseCode);
+//			Debug.Log("Resp text:");
+			bool isTensed = www.downloadHandler.text == "true";
+			StatusText.color = isTensed ? Color.green : Color.blue;
+			if (isTensed)
 			{
 				_isActivated = true;
 				// TODO: do we de-activate after a certain # of false checks?

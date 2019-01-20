@@ -12,6 +12,8 @@ public class GameFlowManager : Singleton<GameFlowManager>
 	public Animator ElevatorDoor;
 	public Animator MenuScene;
 	public Animator CommandRoomScene;
+	public ParticleSystem SmokeSystem;
+	public ParticleSystem FireSystem;
 
 	private GlobalGameState _currentGameState;
 
@@ -31,9 +33,11 @@ public class GameFlowManager : Singleton<GameFlowManager>
 	{
 		if (_currentGameState == GlobalGameState.WAIT_TO_BEGIN)
 		{
+			SmokeSystem.gameObject.SetActive(false);
+			FireSystem.gameObject.SetActive(false);
 			UIManager.Instance.BigCenterText.text = "PRESS TRIGGER TO BEGIN";
 			UIManager.Instance.HintText.text = "";
-			if (InputManager.Instance.IsTriggerDown())
+			if (InputManager.Instance.IsTriggerDownThisFrame())
 			{
 				GoToState(GlobalGameState.PLACE_ELEVATOR);
 			}
@@ -42,7 +46,7 @@ public class GameFlowManager : Singleton<GameFlowManager>
 		{
 			UIManager.Instance.BigCenterText.text = "";
 			UIManager.Instance.HintText.text = "PLACE ON THE FLOOR (PRESS TRIGGER)";
-			if (InputManager.Instance.IsTriggerDown())
+			if (InputManager.Instance.IsTriggerDownThisFrame())
 			{
 				PlaySpaceRoot.gameObject.SetActive(true);
 				Transform controllerRaycast = InputManager.Instance.ControllerRaycast;
@@ -61,7 +65,7 @@ public class GameFlowManager : Singleton<GameFlowManager>
 		{
 			UIManager.Instance.BigCenterText.text = "";
 			UIManager.Instance.HintText.text = "SELECT YOUR EXERCISE";
-			if (InputManager.Instance.IsTriggerDown())
+			if (InputManager.Instance.IsTriggerDownThisFrame())
 			{
 				// TODO: Add transition effect!
 				BodyFull.transform.gameObject.SetActive(false);
@@ -82,7 +86,7 @@ public class GameFlowManager : Singleton<GameFlowManager>
 		{
 			UIManager.Instance.BigCenterText.text = "";
 			UIManager.Instance.HintText.text = "PLACE ELECTRODES";
-			if ((!AudioManager.Instance.IsNarrativeStillPlaying() && InputManager.Instance.IsTriggerDown()) || Input.GetKeyDown(KeyCode.F))
+			if ((!AudioManager.Instance.IsNarrativeStillPlaying() && InputManager.Instance.IsTriggerDownThisFrame()) || Input.GetKeyDown(KeyCode.F))
 			{
 				GoToState(GlobalGameState.PLACE_ELECTRODES_2);
 			}
@@ -91,7 +95,7 @@ public class GameFlowManager : Singleton<GameFlowManager>
 		{
 			UIManager.Instance.BigCenterText.text = "";
 			UIManager.Instance.HintText.text = "PLACE ELECTRODES";
-			if ((!AudioManager.Instance.IsNarrativeStillPlaying() && InputManager.Instance.IsTriggerDown()) || Input.GetKeyDown(KeyCode.F))
+			if ((!AudioManager.Instance.IsNarrativeStillPlaying() && InputManager.Instance.IsTriggerDownThisFrame()) || Input.GetKeyDown(KeyCode.F))
 			{
 				GoToState(GlobalGameState.ROCKET_TRANSITION);
 			}
@@ -119,11 +123,8 @@ public class GameFlowManager : Singleton<GameFlowManager>
 		else if (_currentGameState == GlobalGameState.WIN)
 		{
 			UIManager.Instance.BigCenterText.text = "";
-			UIManager.Instance.HintText.text = "CONGRATS!";
-			if (InputManager.Instance.IsTriggerDown())
-			{
-				GoToState(GlobalGameState.WAIT_TO_BEGIN);
-			}
+			UIManager.Instance.HintText.text = "!";
+			GoToState(GlobalGameState.WAIT_TO_BEGIN);
 		}
 	}
 
