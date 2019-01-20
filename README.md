@@ -6,19 +6,21 @@ We're kicking off 2019 with an amazing MIT project utilizing Brain Computer Inte
 
 ## Built With  
 
-Hardware
-OpenBCI Ganglion (4 channel) 
+_Hardware_ <br/>
+OpenBCI Ganglion (4 channel) <br/>
+SkinTact electrodes <br/> 
+Magic Leap <br/>
 
-Software 
-OpenBCI GUI 
-Unity build for Magic Leap 
-Node.js
+_Software_  <br/>
+OpenBCI GUI  <br/>
+Unity build for Magic Leap  <br/>
+Node.js library <br/>
 
 
-## Plugins Used
+## Refernece Links
 
 * [Unity Socket.io Client Plugin](https://github.com/dp0ch/Unity-SocketIO-Client)
-*
+* [To set up the Ganglion](http://docs.openbci.com/Tutorials/02-Ganglion_Getting%20Started_Guide)
 
 ## What the project does
 
@@ -41,22 +43,21 @@ The OpenBCI uses the OpenBCI Ganglion (set as an EMG) to referece the relevative
 
 We used electrodes (OpenBCI purple, white, grey with 2 electrodes being +3 and -3 and then a reference electrode) to get a muscle signal to the OpenBCI Ganglion board. This board acted as a signal amplifier and used a Simplee BLE Radio module. The signals were picked up over bluetooth by a sever and stream set up through terminal on a Mac (the Bluetooth-ing for OpenBCI products on Windows wouldn't work even with a BLED 112, 4.0 CSR, virtual machine, running Unbuntu through a flash drive/virtual environment, or hacking the USB drivers so for bluetooth to work you really need a Mac). 
 
-On the first Mac we set up (1) a live stream in terminal window of the signal picked up by the Ganglion, (2) a client.js file to initiate the handshake, (3) our WebServer.js which parsed out the relevant channel data. (See a example https://imgur.com/a/J67oZc0 of why we had to parse out the signal this way - each of the 4 channels would pick up signal, and then each channel would return an array of size 4). 
+On the first Mac we set up (1) a live stream in terminal window of the signal picked up by the Ganglion, (2) a client.js file to initiate the handshake, (3) our WebServer.js which parsed out the relevant channel data. (See a example [here](https://imgur.com/a/J67oZc0) of why we had to parse out the signal this way - each of the 4 channels would pick up signal, and then each channel would return an array of size 4). 
 
-Still on this first Mac we found a threshold that would indicate that the muscle was active. We chose this by using the OpenBCI GUI to visualize FFT processed live data and a pyplot to visualize non live data https://imgur.com/a/ivxesRg to figure out which channel was the relevant signal and what numbers of microvolts/microsecond to expect within the stream. This threshold is then used as the trigger within an if statement of the stream.js. Once the threshold is reached, the local HTP server is initiated and the "go" signal is sent to the client. This client runs on a second laptop and takes the "go" as a trigger event for Unity. This trigger event activates the Rocket thruster animation which allows the rocket to take off. The rocket then follows the user's arm as they raise their arm completing the rehab exercise, and travels towards a distant Mars.  The client lives on the Magic Leap too. 
+Still on this first Mac we found a threshold that would indicate that the muscle was active. We chose this by using the OpenBCI GUI to visualize FFT processed live data and a pyplot to [visualize](https://imgur.com/a/ivxesRg) non live data  to figure out which channel was the relevant signal and what numbers of microvolts/microsecond to expect within the stream. This threshold is then used as the trigger within an if statement of the stream.js. Once the threshold is reached, the local HTP server is initiated and the "go" signal is sent to the client. This client runs on a second laptop and takes the "go" as a trigger event for Unity. This trigger event activates the Rocket thruster animation which allows the rocket to take off. The rocket then follows the user's arm as they raise their arm completing the rehab exercise, and travels towards a distant Mars.  The client lives on the Magic Leap too. 
 
 ## Project isn't working first checks 
 * Is everyone on the same wifi
 * Are you using the right version on Unity
 * What channels are you using on the Ganglion and have you parsed out the corresponding one 
-
 * You also need to cycle the Ganglion on and off each time you launch the server
 * Make sure that on the first Mac you have both the data stream and client running simultaneously (client receives the raw data and stream will be what prints your console.Log confirmation of Tense/relaxed 
 * try lowering the threshold 
 
 ## Contributors 
-Sophia Batchelor
-Brian Jordan
-Rogue Fong 
-Alexandria Heston 
-Jake Rutkowski
+Sophia Batchelor <br/>
+Brian Jordan <br/>
+Rogue Fong  <br/>
+Alexandria Heston <br/>
+Jake Rutkowski <br/>
