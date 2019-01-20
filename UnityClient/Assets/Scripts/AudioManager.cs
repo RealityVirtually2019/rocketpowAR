@@ -11,7 +11,7 @@ public class AudioManager : Singleton<AudioManager>
 
 	public void Update()
 	{
-		if (InputManager.Instance.IsTriggerDown())
+		if (InputManager.Instance.IsTriggerDownThisFrame())
 		{
 			PlaySoundEffect(AudioLibrary.Instance.TriggerSound);
 		}
