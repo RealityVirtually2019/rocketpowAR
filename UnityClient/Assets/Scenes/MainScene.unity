@@ -638,6 +638,14 @@ Prefab:
       propertyPath: m_LocalPosition.x
       value: 0.05
       objectReference: {fileID: 0}
+    - target: {fileID: 1708062251553252, guid: 2210daddaf1a7b743b8d27cc5cd6cd57, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1802009226191166, guid: 2210daddaf1a7b743b8d27cc5cd6cd57, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2210daddaf1a7b743b8d27cc5cd6cd57, type: 2}
   m_IsPrefabParent: 0
@@ -1026,11 +1034,14 @@ MonoBehaviour:
     type: 3}
   ActivityInstructionC: {fileID: 8300000, guid: 311db1e8fa1a2424985de448cc9be6df,
     type: 3}
+  IndustrialSpaces: {fileID: 8300000, guid: 807f0e58652da4349b18c91f4c9b00e7, type: 3}
   SplashScreenMusic: {fileID: 8300000, guid: 710e92108d4c27b46aea4df8d2d6bc38, type: 3}
   AmbientIntro: {fileID: 8300000, guid: 807f0e58652da4349b18c91f4c9b00e7, type: 3}
   ElevatorDoorOpen: {fileID: 8300000, guid: 51ca13224392be444b519b3d3356e6e1, type: 3}
   TriggerSound: {fileID: 8300000, guid: db147972d8da2fb4684698b0a17da227, type: 3}
   TorsoTransition: {fileID: 8300000, guid: d49553ba0c55e04479fc326ce3f2cb99, type: 3}
+  CrowdHospitalWaiting: {fileID: 8300000, guid: 4f36716ab0e8d354094691866bcdcb56,
+    type: 3}
 --- !u!1 &1044815949
 GameObject:
   m_ObjectHideFlags: 0
@@ -2350,6 +2361,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlaySpaceRoot: {fileID: 2001600002}
+  Rocket: {fileID: 1537476412}
   BodyFull: {fileID: 1927226161}
   Torso: {fileID: 1819344274}
   ElevatorDoor: {fileID: 473568357}
@@ -2730,15 +2742,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4813208391301404, guid: 85dee5ca2a26c3542aafeeab9cd4838d, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0.531
+      value: -0.633
       objectReference: {fileID: 0}
     - target: {fileID: 4813208391301404, guid: 85dee5ca2a26c3542aafeeab9cd4838d, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -0.129
+      value: 1.397
       objectReference: {fileID: 0}
     - target: {fileID: 4813208391301404, guid: 85dee5ca2a26c3542aafeeab9cd4838d, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 3.044
       objectReference: {fileID: 0}
     - target: {fileID: 4813208391301404, guid: 85dee5ca2a26c3542aafeeab9cd4838d, type: 2}
       propertyPath: m_LocalRotation.x

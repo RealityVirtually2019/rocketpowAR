@@ -10,15 +10,26 @@ public class RocketLaunchMiniGame : Singleton<RocketLaunchMiniGame>
 	
 	private ActivityAState _activityAState;
 	private ActivityBState _activityBState;
+
+	private const float ActivityADuration = 8f;
+	private float _activityAStartTime;
 	
 	public void StartMiniGame()
 	{
-		GoToState(MiniGameState.ACTIVITY_A);
+		GoToState(MiniGameState.INTRODUCTION);
 	}
 
 	void Update()
 	{
-		if (RocketLaunchGameState == MiniGameState.ACTIVITY_A)
+		if (RocketLaunchGameState == MiniGameState.INTRODUCTION)
+		{
+			if (!AudioManager.Instance.IsNarrativeStillPlaying())
+			{
+				BCIHTTPConnector.Instance.ResetIsActivated();
+				GoToState(MiniGameState.ACTIVITY_A);
+			}
+		}
+		else if (RocketLaunchGameState == MiniGameState.ACTIVITY_A)
 		{
 			if (_activityAState == ActivityAState.NOT_STARTED)
 			{
@@ -30,28 +41,16 @@ public class RocketLaunchMiniGame : Singleton<RocketLaunchMiniGame>
 				if (!AudioManager.Instance.IsNarrativeStillPlaying())
 				{
 					BCIHTTPConnector.Instance.ResetIsActivated();
+					_activityAStartTime = Time.realtimeSinceStartup;
 					GoToActivityAState(ActivityAState.FLEXING);
 				}
 			}
 			else if (_activityAState == ActivityAState.FLEXING)
 			{
-				// WHen we enter the flexing state, we raise the rocket
-				// If they're activated over the network!
-				if (BCIHTTPConnector.Instance.CheckIsActivated())
+				float timeSoFar = Time.realtimeSinceStartup - _activityAStartTime;
+				if (timeSoFar > ActivityADuration)
 				{
-					_activityALaunches++;
-					if (_activityALaunches == 1)
-					{
-						AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.ActivityInstructionB);	
-					}
-					if (_activityALaunches == 2)
-					{
-						GoToState(MiniGameState.ACTIVITY_B);
-					}
-					else
-					{
-						GoToActivityAState(ActivityAState.INSTRUCTIONS);
-					}
+					GoToState(MiniGameState.ACTIVITY_B);					
 				}
 			}
 		}
@@ -59,8 +58,7 @@ public class RocketLaunchMiniGame : Singleton<RocketLaunchMiniGame>
 		{
 			if (_activityBState == ActivityBState.NOT_STARTED)
 			{
-				// TODO: this might be wrong
-				AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.ActivityInstructionC);
+				AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.ActivityInstructionB);
 				GoToActivityBState(ActivityBState.INSTRUCTIONS);
 			}
 			else if (_activityBState == ActivityBState.INSTRUCTIONS)
@@ -68,25 +66,24 @@ public class RocketLaunchMiniGame : Singleton<RocketLaunchMiniGame>
 				if (!AudioManager.Instance.IsNarrativeStillPlaying())
 				{
 					BCIHTTPConnector.Instance.ResetIsActivated();
-					GoToActivityBState(ActivityBState.FLEXING);
+					GoToActivityBState(ActivityBState.EXERCISING);
 				}
 			}
-			else if (_activityBState == ActivityBState.FLEXING)
+			else if (_activityBState == ActivityBState.EXERCISING)
 			{
 				if (BCIHTTPConnector.Instance.CheckIsActivated())
 				{
-					GoToActivityBState(ActivityBState.RAISING);
+					// Start particle effect!
+					Debug.Log("Would launch it now!");
+//					GoToActivityBState(ActivityBState.LAUNCHING);
 				}
-			}
-			else if (_activityBState == ActivityBState.RAISING)
-			{
 				if (InputManager.Instance.IsRaisedToLaunchHeight())
 				{
 					// Update launch height based on distance btwn head 
 					_activityBLaunches++;
 					if (_activityBLaunches == 1)
 					{
-						AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.ActivityInstructionB);	
+						AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.ActivityInstructionB);
 					}
 					if (_activityBLaunches == 2)
 					{
@@ -97,6 +94,7 @@ public class RocketLaunchMiniGame : Singleton<RocketLaunchMiniGame>
 						GoToActivityBState(ActivityBState.INSTRUCTIONS);
 					}
 				}
+
 			}
 			else if (_activityBState == ActivityBState.LAUNCHING)
 			{
@@ -143,7 +141,11 @@ public class RocketLaunchMiniGame : Singleton<RocketLaunchMiniGame>
 	
 	private void onStateEnter(MiniGameState stateBeingEntered)
 	{
-		if (stateBeingEntered == MiniGameState.ACTIVITY_A)
+		if (stateBeingEntered == MiniGameState.INTRODUCTION)
+		{
+			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.NarrativeIntro);	
+		}
+		else if (stateBeingEntered == MiniGameState.ACTIVITY_A)
 		{
 			GoToActivityAState(ActivityAState.FLEXING);	
 		}
@@ -162,7 +164,8 @@ public class RocketLaunchMiniGame : Singleton<RocketLaunchMiniGame>
 public enum MiniGameState
 {
 	NOT_STARTED,
-	ACTIVITY_A, // 3 flexes, first 2 with special instructions
+	INTRODUCTION,
+	ACTIVITY_A,
 	ACTIVITY_B, // 10 flex and raise
 	COMPLETED
 }
@@ -178,7 +181,7 @@ public enum ActivityBState
 {
 	NOT_STARTED,
 	INSTRUCTIONS,
-	FLEXING,
+	EXERCISING,
 	RAISING,
 	LAUNCHING
 }

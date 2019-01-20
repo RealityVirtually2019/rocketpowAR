@@ -39,6 +39,8 @@ public class InputManager : Singleton<InputManager>
 
 	public bool IsRaisedToLaunchHeight()
 	{
+		float controllerPosition = ControllerConnectionHandler.transform.position.y;
+		float headPosition = Camera.main.transform.position.y;
 		return true;
 	}
 	
