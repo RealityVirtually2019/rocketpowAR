@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameFlowManager : Singleton<GameFlowManager>
 {
 	public Transform PlaySpaceRoot;
+	public Transform Rocket;
 	public Transform BodyFull;
 	public Transform Torso;
 	
@@ -45,6 +46,7 @@ public class GameFlowManager : Singleton<GameFlowManager>
 			{
 				PlaySpaceRoot.gameObject.SetActive(true);
 				Transform controllerRaycast = InputManager.Instance.ControllerRaycast;
+				Rocket.gameObject.SetActive(false);
 				BodyFull.transform.gameObject.SetActive(true);
 				Torso.transform.gameObject.SetActive(false);
 				PlaySpaceRoot.transform.position = controllerRaycast.position;
@@ -98,7 +100,7 @@ public class GameFlowManager : Singleton<GameFlowManager>
 		{
 			UIManager.Instance.BigCenterText.text = "";
 			UIManager.Instance.HintText.text = "";
-			if ((!AudioManager.Instance.IsNarrativeStillPlaying() && InputManager.Instance.IsTriggerDown()) || Input.GetKeyDown(KeyCode.F))
+			if (!AudioManager.Instance.IsNarrativeStillPlaying() || Input.GetKeyDown(KeyCode.F))
 			{
 				GoToState(GlobalGameState.LAUNCH_ROCKETS);
 			}
@@ -106,7 +108,7 @@ public class GameFlowManager : Singleton<GameFlowManager>
 		else if (_currentGameState == GlobalGameState.LAUNCH_ROCKETS)
 		{
 			UIManager.Instance.BigCenterText.text = "";
-			UIManager.Instance.HintText.text = "LAUNCH ROCKETS";
+			UIManager.Instance.HintText.text = "";
 			if (RocketLaunchMiniGame.Instance.RocketLaunchGameState == MiniGameState.COMPLETED)
 			{
 				// WIN!
@@ -173,12 +175,16 @@ public class GameFlowManager : Singleton<GameFlowManager>
 		else if (stateBeingEntered == GlobalGameState.ROCKET_TRANSITION)
 		{
 			MenuScene.Play("HumanTubeLower");
+			Rocket.gameObject.SetActive(true);
+			Rocket.transform.localPosition = Vector3.zero;
 			StartCoroutine(delayedAnimation(ElevatorDoor, "ElevatorDoorCloseNew", 1.5f));
 			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.SensorSet);
 			AudioManager.Instance.PlaySoundEffect(AudioLibrary.Instance.ElevatorDoorOpen);
 		}
 		else if (stateBeingEntered == GlobalGameState.LAUNCH_ROCKETS)
 		{
+			AudioManager.Instance.PlaySoundEffect(AudioLibrary.Instance.CrowdHospitalWaiting);
+			AudioManager.Instance.PlayAmbient(AudioLibrary.Instance.IndustrialSpaces);
 			RocketLaunchMiniGame.Instance.StartMiniGame();
 		}
 	}

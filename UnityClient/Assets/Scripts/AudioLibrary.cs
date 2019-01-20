@@ -25,6 +25,8 @@ public class AudioLibrary : Singleton<AudioLibrary>
 	public AudioClip ActivityInstructionB;
 	public AudioClip ActivityInstructionC;
 	
+	[Header("Ambient Clips")]
+	public AudioClip IndustrialSpaces;
 	
 	[Header("Music Clips")]
 	public AudioClip SplashScreenMusic;
@@ -34,4 +36,5 @@ public class AudioLibrary : Singleton<AudioLibrary>
 	public AudioClip ElevatorDoorOpen;
 	public AudioClip TriggerSound;
 	public AudioClip TorsoTransition;
+	public AudioClip CrowdHospitalWaiting;
 }
