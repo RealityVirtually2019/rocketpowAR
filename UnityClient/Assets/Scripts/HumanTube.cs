@@ -26,7 +26,7 @@ public class HumanTube : MonoBehaviour {
 
     public void RaiseHumanTube()
     {
-        if (GameFlowManager.Instance.CurrentGameState == GlobalGameState.SELECTEXERCISE)
+        if (GameFlowManager.Instance.GetGameState() == GlobalGameState.SELECT_EXERCISE)
         {
             raiseHumanTubeSFX.Play();
             humanTube.transform.position = Vector3.Lerp(humanTubeBelowElevator, humanTubeRaised, 2000);
@@ -39,7 +39,7 @@ public class HumanTube : MonoBehaviour {
 
     public void LowerHumanTube()
     {
-        if (GameFlowManager.Instance.CurrentGameState == GlobalGameState.SELECTEXERCISE)
+        if (GameFlowManager.Instance.GetGameState() == GlobalGameState.SELECT_EXERCISE)
         {
             lowerHumanTubeSFX.Play();
             humanTube.transform.position = Vector3.Lerp(humanTubeRaised, humanTubeBelowElevator, 2000);

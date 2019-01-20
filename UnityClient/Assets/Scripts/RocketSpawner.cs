@@ -32,7 +32,7 @@ public class RocketSpawner : MonoBehaviour {
 
     public void RaiseRocket()
     {
-        if(GameFlowManager.Instance.CurrentGameState == GlobalGameState.LAUNCHROCKETS && !raiseRocketSFX.isPlaying)
+        if(GameFlowManager.Instance.GetGameState() == GlobalGameState.LAUNCH_ROCKETS && !raiseRocketSFX.isPlaying)
         {
             raiseRocketSFX.Play();
             rocket.transform.position = Vector3.Lerp(RocketBelowElevator, RocketUnlaunched, 2000);
@@ -44,7 +44,7 @@ public class RocketSpawner : MonoBehaviour {
 
     public void LaunchRocket()
     {
-        if (GameFlowManager.Instance.CurrentGameState == GlobalGameState.LAUNCHROCKETS && !raiseRocketSFX.isPlaying)
+        if (GameFlowManager.Instance.GetGameState() == GlobalGameState.LAUNCH_ROCKETS && !raiseRocketSFX.isPlaying)
         {
             rocketLaunchSFX.Play();
             //call the animation?
