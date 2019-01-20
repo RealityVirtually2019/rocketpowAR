@@ -6,7 +6,22 @@ public class AudioManager : Singleton<AudioManager>
 {
 	public AudioSource MusicAudioSource;
 	public AudioSource NarrativeAudioSource;
+	public AudioSource SoundEffectAudioSource;
 
+	public void Update()
+	{
+		if (InputManager.Instance.IsTriggerDown())
+		{
+			PlaySoundEffect(AudioLibrary.Instance.TriggerSound);
+		}
+	}
+	
+	public void PlaySoundEffect(AudioClip audioToPlay)
+	{
+		SoundEffectAudioSource.clip = audioToPlay;
+		SoundEffectAudioSource.Play();
+	}
+	
 	public void PlayMusic(AudioClip audioToPlay)
 	{
 		MusicAudioSource.clip = audioToPlay;

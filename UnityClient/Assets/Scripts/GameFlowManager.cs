@@ -4,24 +4,23 @@ using UnityEngine;
 
 public class GameFlowManager : Singleton<GameFlowManager>
 {
-	public GameObject rocketObject;
-	public int rocketsToLaunch;
-	private int rocketsLaunched;
+	public Transform PlaySpaceRoot;
 	
-	public GameObject ElevatorPrefab;
-	
+	public Animator ElevatorDoor;
+	public Animator MenuScene;
+	public Animator CommandRoomScene;
+
 	private GlobalGameState _currentGameState;
-	
+
 	private GameObject _elevator;
 
 	public GlobalGameState GetGameState()
 	{
 		return _currentGameState;
 	}
-	
+
 	void Start()
 	{
-		rocketsLaunched = 0;
 		GoToState(GlobalGameState.WAIT_TO_BEGIN);
 	}
 
@@ -29,11 +28,6 @@ public class GameFlowManager : Singleton<GameFlowManager>
 	{
 		if (_currentGameState == GlobalGameState.WAIT_TO_BEGIN)
 		{
-			if (_elevator != null)
-			{
-				Destroy(_elevator);
-				_elevator = null;
-			}
 			UIManager.Instance.BigCenterText.text = "PRESS TRIGGER TO BEGIN";
 			UIManager.Instance.HintText.text = "";
 			if (InputManager.Instance.IsTriggerDown())
@@ -47,12 +41,12 @@ public class GameFlowManager : Singleton<GameFlowManager>
 			UIManager.Instance.HintText.text = "PLACE ON THE FLOOR (PRESS TRIGGER)";
 			if (InputManager.Instance.IsTriggerDown())
 			{
+				PlaySpaceRoot.gameObject.SetActive(true);
 				Transform controllerRaycast = InputManager.Instance.ControllerRaycast;
-				_elevator = Instantiate(ElevatorPrefab, controllerRaycast.position, Quaternion.identity);
-				_elevator.GetComponent<ElevatorDoors>().openElevatorDoors();
-				// TODO: Make plane orient relative to player
-				
-				controllerRaycast.gameObject.SetActive(false);
+				PlaySpaceRoot.transform.position = controllerRaycast.position;
+				PlaySpaceRoot.transform.LookAt(Camera.main.transform);
+				PlaySpaceRoot.transform.localEulerAngles = new Vector3(0f, PlaySpaceRoot.transform.localEulerAngles.y, 0f);
+				ElevatorDoor.Play("ElevatorDoorOpenNew");
 				controllerRaycast.gameObject.SetActive(false);
 				GoToState(GlobalGameState.SELECT_EXERCISE);
 			}
@@ -74,14 +68,33 @@ public class GameFlowManager : Singleton<GameFlowManager>
 				// And animation is finished
 			)
 			{
-				GoToState(GlobalGameState.WAIT_TO_BEGIN);
+				GoToState(GlobalGameState.PLACE_ELECTRODES);
 			}
 		}
 		else if (_currentGameState == GlobalGameState.PLACE_ELECTRODES)
 		{
-			
 			UIManager.Instance.BigCenterText.text = "";
 			UIManager.Instance.HintText.text = "PLACE ELECTRODES";
+			if (InputManager.Instance.IsTriggerDown())
+			{
+				GoToState(GlobalGameState.LAUNCH_ROCKETS);
+			}
+		}
+		else if (_currentGameState == GlobalGameState.LAUNCH_ROCKETS)
+		{
+			UIManager.Instance.BigCenterText.text = "";
+			UIManager.Instance.HintText.text = "LAUNCH ROCKETS";
+			if (RocketLaunchMiniGame.Instance.RocketLaunchGameState == MiniGameState.COMPLETED)
+			{
+				// WIN!
+				RocketLaunchMiniGame.Instance.ResetState();
+				GoToState(GlobalGameState.WIN);
+			}
+		}
+		else if (_currentGameState == GlobalGameState.WIN)
+		{
+			UIManager.Instance.BigCenterText.text = "";
+			UIManager.Instance.HintText.text = "CONGRATS!";
 			if (InputManager.Instance.IsTriggerDown())
 			{
 				GoToState(GlobalGameState.WAIT_TO_BEGIN);
@@ -95,7 +108,7 @@ public class GameFlowManager : Singleton<GameFlowManager>
 		{
 			print("Going to state " + toState.ToString());
 			onStateEnter(toState);
-			
+
 			_currentGameState = toState;
 		}
 	}
@@ -104,34 +117,29 @@ public class GameFlowManager : Singleton<GameFlowManager>
 	{
 		if (stateBeingEntered == GlobalGameState.WAIT_TO_BEGIN)
 		{
-			AudioManager.Instance.PlayMusic(AudioLibrary.Instance.AmbientIntro);
+			PlaySpaceRoot.gameObject.SetActive(false);
+			AudioManager.Instance.PlayMusic(AudioLibrary.Instance.SplashScreenMusic);
 		}
-		if (stateBeingEntered == GlobalGameState.PLACE_ELEVATOR)
+		else if (stateBeingEntered == GlobalGameState.PLACE_ELEVATOR)
 		{
+			AudioManager.Instance.PlayMusic(AudioLibrary.Instance.AmbientIntro);
 			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.NarrativePlaceElevator);
 		}
-		if (stateBeingEntered == GlobalGameState.SELECT_EXERCISE)
+		else if (stateBeingEntered == GlobalGameState.SELECT_EXERCISE)
 		{
 			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.NarrativeSelectExercise);
 		}
-		if (stateBeingEntered == GlobalGameState.PLACE_ELECTRODES)
+		else if (stateBeingEntered == GlobalGameState.PLACE_ELECTRODES)
 		{
 //			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.NarrativeIntro);
 		}
-		if (stateBeingEntered == GlobalGameState.TRANSITION_TO_COMMAND_CENTER)
+		else if (stateBeingEntered == GlobalGameState.TRANSITION_TO_COMMAND_CENTER)
 		{
 			AudioManager.Instance.PlayNarrative(AudioLibrary.Instance.NarrativeIntro);
 		}
-	}
-
-	public void IncrementRocket()
-	{
-		if (_currentGameState == GlobalGameState.LAUNCH_ROCKETS)
+		else if (stateBeingEntered == GlobalGameState.LAUNCH_ROCKETS)
 		{
-			if (rocketsLaunched < rocketsToLaunch)
-			{
-				rocketsLaunched++;
-			}
+			RocketLaunchMiniGame.Instance.StartMiniGame();
 		}
 	}
 }
@@ -147,4 +155,5 @@ public enum GlobalGameState
 	LAUNCH_ROCKETS,
 	GAME_WON,
 	NARRATIVE,
+	WIN
 }

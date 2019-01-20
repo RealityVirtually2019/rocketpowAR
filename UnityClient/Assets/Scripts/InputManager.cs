@@ -8,7 +8,7 @@ public class InputManager : Singleton<InputManager>
 	public Transform ControllerRaycast;
 	public ControllerConnectionHandler ControllerConnectionHandler;
 
-	private const float TriggerThrottleTime = 3f;
+	private const float TriggerThrottleTime = .6f;
 
 	private float _lastTriggerTime = 0f;
 
@@ -35,5 +35,15 @@ public class InputManager : Singleton<InputManager>
 		    _lastTriggerTime = Time.realtimeSinceStartup;
 		}
 		return shouldTrigger;
+	}
+
+	public bool IsRaisedToLaunchHeight()
+	{
+		return true;
+	}
+	
+	public float GetRaiseAmount()
+	{
+		return .5f;
 	}
 }

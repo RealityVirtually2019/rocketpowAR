@@ -3,16 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class BCIHTTPConnector : MonoBehaviour {
+public class BCIHTTPConnector : Singleton<BCIHTTPConnector>
+{
+	private bool _isActivated;
 
+	public void ResetIsActivated()
+	{
+		_isActivated = false;
+	}
+	
+	public bool CheckIsActivated()
+	{
+		if (_isActivated)
+		{
+			_isActivated = false;
+			return true;
+		}
+		return false;
+	}
+	
 	void Start()
+	{
+		InvokeRepeating("SingleDataRequest", .4f, .4f);
+	}
+
+	void SingleDataRequest()
 	{
 		StartCoroutine(MakeDataRequest());
 	}
 
 	IEnumerator MakeDataRequest()
 	{
-		UnityWebRequest www = UnityWebRequest.Get("http://93b9d778.ngrok.io/");
+		UnityWebRequest www = UnityWebRequest.Get("http://b3a6a049.ngrok.io/");
 		Debug.Log("Web Request Started");
 		yield return www.SendWebRequest();
 		Debug.Log("Web Request Ended");
@@ -27,8 +49,11 @@ public class BCIHTTPConnector : MonoBehaviour {
 			Debug.Log(www.responseCode);
 			Debug.Log("Resp text:");
 			Debug.Log(www.downloadHandler.text);
-			// Or retrieve results as binary data
-//			byte[] results = www.downloadHandler.data;
+			if (www.downloadHandler.text == "true")
+			{
+				_isActivated = true;
+				// TODO: do we de-activate after a certain # of false checks?
+			}
 		}
 	}
 }
