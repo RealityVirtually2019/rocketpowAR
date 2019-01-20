@@ -54,6 +54,7 @@ Still on this first Mac we found a threshold that would indicate that the muscle
 * You also need to cycle the Ganglion on and off each time you launch the server
 * Make sure that on the first Mac you have both the data stream and client running simultaneously (client receives the raw data and stream will be what prints your console.Log confirmation of Tense/relaxed 
 * try lowering the threshold 
+* check the imepedance of your electrodes (channel 3's impendence shouldn't get over 10) - if it is then change the SkinTacts or use conductive paste 
 
 ## Contributors 
 Sophia Batchelor <br/>
